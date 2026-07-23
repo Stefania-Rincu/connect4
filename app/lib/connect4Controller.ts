@@ -14,6 +14,7 @@ export class Connect4Controller {
   private board: Player[][];
   private currentPlayer: Player = 1;
   private gameState: GameState = "idle";
+  private winner: Player = 0;
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -29,6 +30,7 @@ export class Connect4Controller {
     this.board = this.initializeBoard();
     this.currentPlayer = 1;
     this.gameState = "ongoing";
+    this.winner = 0;
     return this.getStatus();
   }
 
@@ -55,6 +57,17 @@ export class Connect4Controller {
 
     this.board[empty_row][column] = this.currentPlayer;
 
+    if (this.checkWin(empty_row, column)) {
+      this.gameState = "won";
+      this.winner = this.currentPlayer;
+      return this.getStatus();
+    }
+
+    if (this.isBoardFull()) {
+      this.gameState = "draw";
+      return this.getStatus();
+    }
+
     if (this.currentPlayer === 1) {
       this.currentPlayer = 2;
     } else {
@@ -64,11 +77,44 @@ export class Connect4Controller {
     return this.getStatus();
   }
 
+  private isBoardFull(): boolean {
+    return this.board[0].every((cell) => cell !== 0);
+  }
+
+  private checkWin(current_row: number, current_column: number): boolean {
+    const player = this.board[current_row][current_column];
+    if (player === 0) {
+      return false;
+    }
+
+    const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+
+    for (const [dir_row, dir_col] of directions) {
+      let count = 1;
+
+      for (const sign of [1, -1]) {
+        let row = current_row + dir_row * sign;
+        let col = current_column + dir_col * sign;
+        while (row >= 0 && row < this.height && col >= 0 && col < this.width && this.board[row][col] === player) {
+          count++;
+          row += dir_row * sign;
+          col += dir_col * sign;
+        }
+      }
+
+      if (count >= 4) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public getStatus(): GameStatus {
     return {
       board: this.board,
       state: this.gameState,
-      winner: this.gameState === "won" ? this.currentPlayer : undefined,
+      winner: this.gameState === "won" ? this.winner : undefined,
       currentPlayer: this.currentPlayer,
     };
   }
