@@ -14,7 +14,6 @@ export class Connect4Controller {
   private board: Player[][];
   private currentPlayer: Player = 1;
   private gameState: GameState = "idle";
-  private winner: Player = 0;
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -30,7 +29,6 @@ export class Connect4Controller {
     this.board = this.initializeBoard();
     this.currentPlayer = 1;
     this.gameState = "ongoing";
-    this.winner = 0;
     return this.getStatus();
   }
 
@@ -59,7 +57,6 @@ export class Connect4Controller {
 
     if (this.checkWin(empty_row, column)) {
       this.gameState = "won";
-      this.winner = this.currentPlayer;
       return this.getStatus();
     }
 
@@ -114,7 +111,7 @@ export class Connect4Controller {
     return {
       board: this.board,
       state: this.gameState,
-      winner: this.gameState === "won" ? this.winner : undefined,
+      winner: this.gameState === "won" ? this.currentPlayer : undefined,
       currentPlayer: this.currentPlayer,
     };
   }
