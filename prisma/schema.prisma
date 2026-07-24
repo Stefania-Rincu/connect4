@@ -8,11 +8,17 @@ datasource db {
 }
 
 model Game {
-  id        Int     @id @default(autoincrement())
-  winner    Int
-  loser     Int
+  id        Int      @id @default(autoincrement())
+  outcome   Outcome
+  winner    Int?
+  loser     Int?
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([createdAt])
   @@map("games")
+}
+
+enum Outcome {
+  win
+  draw
 }

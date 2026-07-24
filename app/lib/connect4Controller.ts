@@ -32,18 +32,26 @@ export class Connect4Controller {
     return this.getStatus();
   }
 
-  private uploadGameResult(winner: number, loser: number): void {
-    try {
-      fetch("/api/games", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ winner, loser }),
-      }).catch((error) =>
-        console.error("Failed to upload game result: ", error),
-      );
-    } catch (error) {
-      console.error("Failed to upload game result: ", error);
-    }
+  private uploadGameResult(
+    outcome: "win" | "draw",
+    winner?: number,
+    loser?: number,
+  ): void {
+    fetch("/api/games", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ outcome, winner, loser }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          console.error(
+            `Failed to upload game result: server responded with ${res.status}`,
+          );
+          return;
+        }
+        console.log("Game result uploaded successfully");
+      })
+      .catch((error) => console.error("Failed to upload game result: ", error));
   }
 
   public makeMove(column: number): GameStatus | null {
@@ -73,19 +81,19 @@ export class Connect4Controller {
       this.gameState = "won";
 
       let loser;
-      if (this.currentPlayer == 1) {
+      if (this.currentPlayer === 1) {
         loser = 2;
       } else {
         loser = 1;
       }
 
-      this.uploadGameResult(this.currentPlayer, loser);
+      this.uploadGameResult("win", this.currentPlayer, loser);
       return this.getStatus();
     }
 
     if (this.isBoardFull()) {
       this.gameState = "draw";
-      this.uploadGameResult(0, 0);
+      this.uploadGameResult("draw");
       return this.getStatus();
     }
 

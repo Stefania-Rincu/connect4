@@ -6,9 +6,19 @@ export async function POST(request: NextRequest) {
   try {
     const body: GameSubmission = await request.json();
 
-    if (body.winner === undefined || body.loser === undefined) {
+    if (!body.outcome || (body.outcome !== "win" && body.outcome !== "draw")) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing or invalid outcome field" },
+        { status: 400 },
+      );
+    }
+
+    if (
+      body.outcome === "win" &&
+      (body.winner === undefined || body.loser === undefined)
+    ) {
+      return NextResponse.json(
+        { error: "Winner and loser required for a win" },
         { status: 400 },
       );
     }
@@ -22,8 +32,9 @@ export async function POST(request: NextRequest) {
 
     const game = await prisma.game.create({
       data: {
-        winner: body.winner,
-        loser: body.loser,
+        outcome: body.outcome,
+        winner: body.winner ?? null,
+        loser: body.loser ?? null,
       },
     });
 
