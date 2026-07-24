@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx server.ts",
     "build": "next build",
+    "start": "tsx server.ts",
     "lint": "eslint && npx prettier -w .",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -14,7 +15,9 @@
     "@prisma/client": "^5",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "redis": "^6.1.0",
+    "ws": "^8.21.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -22,12 +25,14 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jest": "^30.2.0",
     "prisma": "^5",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.6",
+    "tsx": "^4",
     "typescript": "^5"
   }
 }
