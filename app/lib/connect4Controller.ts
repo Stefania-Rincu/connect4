@@ -84,7 +84,12 @@ export class Connect4Controller {
       return false;
     }
 
-    const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+    const directions = [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [1, -1],
+    ];
 
     for (const [dirRow, dirCol] of directions) {
       let count = 1;
@@ -92,7 +97,13 @@ export class Connect4Controller {
       for (const sign of [1, -1]) {
         let row = currentRow + dirRow * sign;
         let col = currentColumn + dirCol * sign;
-        while (row >= 0 && row < this.height && col >= 0 && col < this.width && this.board[row][col] === player) {
+        while (
+          row >= 0 &&
+          row < this.height &&
+          col >= 0 &&
+          col < this.width &&
+          this.board[row][col] === player
+        ) {
           count++;
           row += dirRow * sign;
           col += dirCol * sign;
