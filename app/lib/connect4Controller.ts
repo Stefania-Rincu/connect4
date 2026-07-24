@@ -32,28 +32,6 @@ export class Connect4Controller {
     return this.getStatus();
   }
 
-  private uploadGameResult(
-    outcome: "win" | "draw",
-    winner?: number,
-    loser?: number,
-  ): void {
-    fetch("/api/games", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ outcome, winner, loser }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          console.error(
-            `Failed to upload game result: server responded with ${res.status}`,
-          );
-          return;
-        }
-        console.log("Game result uploaded successfully");
-      })
-      .catch((error) => console.error("Failed to upload game result: ", error));
-  }
-
   public makeMove(column: number): GameStatus | null {
     if (this.gameState !== "ongoing") {
       return null;
@@ -80,20 +58,11 @@ export class Connect4Controller {
     if (this.checkWin(emptyRow, column)) {
       this.gameState = "won";
 
-      let loser;
-      if (this.currentPlayer === 1) {
-        loser = 2;
-      } else {
-        loser = 1;
-      }
-
-      this.uploadGameResult("win", this.currentPlayer, loser);
       return this.getStatus();
     }
 
     if (this.isBoardFull()) {
       this.gameState = "draw";
-      this.uploadGameResult("draw");
       return this.getStatus();
     }
 
