@@ -86,7 +86,7 @@ Look at the Prisma schema, and understand how the ORM works ([docs](https://www.
 1. Update the `.env` >`DATABASE_URL` with the credentials from PgAdmin
 2. Run the database migration (see `package.json` for the script)
 3. Use Postman/ curl to test the endpoint
-4. Use SQL select  in PgAdmin to check the test
+4. Use SQL select in PgAdmin to check the test
 5. Update `makeMove` to automatically upload wins/ draws
 
 #### Acceptance criteria
@@ -103,14 +103,15 @@ We have a fully-functioning game whereby players can “pass-and-play”. This i
 
 How is this possible? At the moment, the state of the game is stored in the browser (`gameStatus`). This won’t do, since we’re trying to let separate browsers/ machines play the same game.
 
-We *could* store the state in our database in a table… or we could go for gold. It is possible to use an in-memory database like Redis and web sockets to play at the same time.
+We _could_ store the state in our database in a table… or we could go for gold. It is possible to use an in-memory database like Redis and web sockets to play at the same time.
 
 #### Task
 
 - Using AI tools to help you, look for a way to connect players over Redis.
-- You can run redis locally for development & the free tier in Redis Cloud to play online. Do _not_ use Redis Upstash, since it has no free tier. NextJS isn't designed for continuous connections, however 
+- You can run redis locally for development & the free tier in Redis Cloud to play online. Do _not_ use Redis Upstash, since it has no free tier. NextJS isn't designed for continuous connections, however
 
 Suggestion:
+
 1. You can start by modifying the initial game to just POST and stream the entire GameStatus.
 2. Then, you can move controller logic into the POST endpoint, so you only post the move
 3. Finally, you can implement multi-player
