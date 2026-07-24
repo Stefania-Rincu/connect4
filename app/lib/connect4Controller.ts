@@ -57,6 +57,7 @@ export class Connect4Controller {
 
     if (this.checkWin(emptyRow, column)) {
       this.gameState = "won";
+
       return this.getStatus();
     }
 

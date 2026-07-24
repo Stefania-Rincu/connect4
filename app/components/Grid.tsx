@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Connect4Controller, GameStatus } from "../lib/connect4Controller";
+import { postGameResult } from "../lib/gameApi";
+import { GameSubmission } from "../lib/database.types";
 import ResetButton from "./ResetButton";
 
 type GridProps = {
@@ -18,6 +20,40 @@ export default function Grid({ controller }: GridProps) {
   const [gameStatus, setGameStatus] = useState<GameStatus>(() =>
     controller.newGame(),
   );
+  const postedRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      (gameStatus.state === "won" || gameStatus.state === "draw") &&
+      !postedRef.current
+    ) {
+      postedRef.current = true;
+      let submission: GameSubmission;
+
+      if (gameStatus.state === "won") {
+        let loser;
+        if (gameStatus.winner === 1) {
+          loser = 2;
+        } else {
+          loser = 1;
+        }
+
+        submission = {
+          outcome: "win",
+          winner: gameStatus.winner,
+          loser,
+        };
+      } else {
+        submission = { outcome: "draw" };
+      }
+
+      postGameResult(submission)
+        .then(() => console.log("Game result uploaded successfully"))
+        .catch((error) =>
+          console.error("Failed to upload game result: ", error),
+        );
+    }
+  }, [gameStatus]);
 
   const handleColumnClick = (column: number) => {
     if (gameStatus.state !== "ongoing") return;
@@ -29,6 +65,7 @@ export default function Grid({ controller }: GridProps) {
   };
 
   const handleReset = () => {
+    postedRef.current = false;
     setGameStatus(controller.newGame());
   };
 

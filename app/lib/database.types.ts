@@ -1,4 +1,7 @@
+export type Outcome = "win" | "draw";
+
 export interface GameSubmission {
-  winner: number;
-  loser: number;
+  outcome: Outcome;
+  winner?: number;
+  loser?: number;
 }
