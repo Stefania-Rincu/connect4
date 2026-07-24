@@ -1,4 +1,4 @@
-export type GameState = "ongoing" | "won" | "draw" | "idle";
+export type GameState = "ongoing" | "won" | "draw" | "waiting";
 export type Player = 0 | 1 | 2; // 0 = empty, 1 = player 1, 2 = player 2
 
 export interface GameStatus {
@@ -13,7 +13,7 @@ export class Connect4Controller {
   private height: number;
   private board: Player[][];
   private currentPlayer: Player = 1;
-  private gameState: GameState = "idle";
+  private gameState: GameState = "waiting";
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -117,6 +117,16 @@ export class Connect4Controller {
     }
 
     return false;
+  }
+
+  public loadState(
+    board: number[][],
+    currentPlayer: Player,
+    state: GameState,
+  ): void {
+    this.board = board.map((row) => [...row]) as Player[][];
+    this.currentPlayer = currentPlayer;
+    this.gameState = state;
   }
 
   public getStatus(): GameStatus {
