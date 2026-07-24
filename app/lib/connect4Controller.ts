@@ -41,19 +41,29 @@ export class Connect4Controller {
       return null;
     }
 
-    let empty_row = -1;
+    let emptyRow = -1;
     for (let row = this.height - 1; row >= 0; row--) {
       if (this.board[row][column] === 0) {
-        empty_row = row;
+        emptyRow = row;
         break;
       }
     }
 
-    if (empty_row === -1) {
+    if (emptyRow === -1) {
       return null;
     }
 
-    this.board[empty_row][column] = this.currentPlayer;
+    this.board[emptyRow][column] = this.currentPlayer;
+
+    if (this.checkWin(emptyRow, column)) {
+      this.gameState = "won";
+      return this.getStatus();
+    }
+
+    if (this.isBoardFull()) {
+      this.gameState = "draw";
+      return this.getStatus();
+    }
 
     if (this.currentPlayer === 1) {
       this.currentPlayer = 2;
@@ -62,6 +72,39 @@ export class Connect4Controller {
     }
 
     return this.getStatus();
+  }
+
+  private isBoardFull(): boolean {
+    return this.board[0].every((cell) => cell !== 0);
+  }
+
+  private checkWin(currentRow: number, currentColumn: number): boolean {
+    const player = this.board[currentRow][currentColumn];
+    if (player === 0) {
+      return false;
+    }
+
+    const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+
+    for (const [dirRow, dirCol] of directions) {
+      let count = 1;
+
+      for (const sign of [1, -1]) {
+        let row = currentRow + dirRow * sign;
+        let col = currentColumn + dirCol * sign;
+        while (row >= 0 && row < this.height && col >= 0 && col < this.width && this.board[row][col] === player) {
+          count++;
+          row += dirRow * sign;
+          col += dirCol * sign;
+        }
+      }
+
+      if (count >= 4) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   public getStatus(): GameStatus {
